@@ -96,5 +96,9 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0"
   }
 }
