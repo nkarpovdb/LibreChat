@@ -12,7 +12,9 @@ const { PORT, HOST, ALLOW_SOCIAL_LOGIN } = process.env ?? {};
 const port = Number(PORT) || 3080;
 const host = HOST || 'localhost';
 const projectPath = path.join(__dirname, '..', '..', 'client');
-const { jwtLogin, joseLogin, passportLogin } = require('../strategies');
+const { jwtLogin, joseLogin, passportLogin, jwtDatabricks } = require('../strategies');
+
+const cookieParser = require('cookie-parser');
 
 const startServer = async () => {
   await connectDb();
@@ -30,6 +32,7 @@ const startServer = async () => {
   app.use(express.static(path.join(projectPath, 'public')));
   app.set('trust proxy', 1); // trust first proxy
   app.use(cors());
+  app.use(cookieParser());
 
   if (!ALLOW_SOCIAL_LOGIN) {
     console.warn(
@@ -39,11 +42,13 @@ const startServer = async () => {
 
   // OAUTH
   app.use(passport.initialize());
+  /*
   if (typeof Bun !== 'undefined') {
     passport.use('jwt', await joseLogin());
   } else {
     passport.use(await jwtLogin());
-  }
+  }*/
+  passport.use('jwt-databricks', jwtDatabricks());
   passport.use(passportLogin());
 
   if (ALLOW_SOCIAL_LOGIN?.toLowerCase() === 'true') {

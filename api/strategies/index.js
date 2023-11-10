@@ -6,6 +6,7 @@ const joseLogin = require('./joseStrategy');
 const jwtLogin = require('./jwtStrategy');
 const facebookLogin = require('./facebookStrategy');
 const setupOpenId = require('./openidStrategy');
+const jwtDatabricks = require('./jwtDatabricks');
 
 module.exports = {
   passportLogin,
@@ -16,4 +17,5 @@ module.exports = {
   jwtLogin,
   facebookLogin,
   setupOpenId,
+  jwtDatabricks,
 };
