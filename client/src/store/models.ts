@@ -26,6 +26,9 @@ const modelsConfig = atom<TModelsConfig>({
       'claude-instant-1-100k',
       'claude-2',
     ],
+    databricks: [
+      'databricks-llama-2-70b-chat',
+    ]
   },
 });
 

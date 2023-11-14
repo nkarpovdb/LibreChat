@@ -71,53 +71,45 @@ const resetPasswordController = async (req, res) => {
 };
 
 const refreshController = async (req, res) => {
-  const refreshToken = req.headers.cookie ? cookies.parse(req.headers.cookie).refreshToken : null;
-  if (!refreshToken) {
+  // Extract the JWT from the cookie
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['ws_id_token'];
+  }
+
+  if (!token) {
     return res.status(200).send('Refresh token not provided');
   }
 
+  // Optional: Decode the token if you need to extract user info from it
+  let decodedToken;
   try {
-    let payload;
-    if (typeof Bun !== 'undefined') {
-      const secret = new TextEncoder().encode(process.env.JWT_REFRESH_SECRET);
-      ({ payload } = await jose.jwtVerify(refreshToken, secret));
-    } else {
-      payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    }
-    const userId = payload.id;
-    const user = await User.findOne({ _id: userId });
-    if (!user) {
-      return res.status(401).redirect('/login');
-    }
-
-    if (process.env.NODE_ENV === 'CI') {
-      const token = await setAuthTokens(userId, res);
-      const userObj = user.toJSON();
-      return res.status(200).send({ token, user: userObj });
-    }
-
-    // Hash the refresh token
-    const hash = crypto.createHash('sha256');
-    const hashedToken = hash.update(refreshToken).digest('hex');
-
-    // Find the session with the hashed refresh token
-    const session = await Session.findOne({ user: userId, refreshTokenHash: hashedToken });
-    if (session && session.expiration > new Date()) {
-      const token = await setAuthTokens(userId, res, session._id);
-      const userObj = user.toJSON();
-      res.status(200).send({ token, user: userObj });
-    } else if (req?.query?.retry) {
-      // Retrying from a refresh token request that failed (401)
-      res.status(403).send('No session found');
-    } else if (payload.exp < Date.now() / 1000) {
-      res.status(403).redirect('/login');
-    } else {
-      res.status(401).send('Refresh token expired or not found for this user');
-    }
+    decodedToken = jwt.decode(token); // Note: This does not verify the token
   } catch (err) {
-    console.error('Refresh token error', refreshToken);
-    console.error(err);
-    res.status(403).send('Invalid refresh token');
+    return res.status(200).send(err);
+  }
+
+  // Use the decoded token for user info
+  const userInfo = decodedToken; // Or extract specific fields from decodedToken
+
+  try {
+    let user = await User.findOne({ email: userInfo.email });
+
+    if (!user) {
+      // Create a new user instance
+      user = new User({
+        email: userInfo.email,
+        name: userInfo.name,
+      });
+
+      // Save the user to the database
+      await user.save();
+    }
+
+    //done(null, user);
+    return res.status(200).send({ token, user: user.toJSON() });
+  } catch (err) {
+    return res.status(200).send(err);
   }
 };
 

@@ -49,7 +49,7 @@ const startServer = async () => {
     passport.use(await jwtLogin());
   }*/
   passport.use('jwt-databricks', jwtDatabricks());
-  passport.use(passportLogin());
+  //passport.use(passportLogin());
 
   if (ALLOW_SOCIAL_LOGIN?.toLowerCase() === 'true') {
     configureSocialLogins(app);

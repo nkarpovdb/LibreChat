@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plugin, GPTIcon, AnthropicIcon, AzureMinimalIcon } from '~/components/svg';
+import { Plugin, GPTIcon, AnthropicIcon, AzureMinimalIcon, DatabricksIcon } from '~/components/svg';
 import { useAuthContext } from '~/hooks';
 import { cn } from '~/utils';
 import { IconProps } from '~/common';
@@ -72,6 +72,11 @@ const Icon: React.FC<IconProps> = (props) => {
             ? '#AB68FF'
             : `rgba(0, 163, 255, ${button ? 0.75 : 1})`,
         name: 'ChatGPT',
+      },
+      databricks: {
+        icon: <DatabricksIcon size={size * 0.5555555555555556} />,
+        bg: '#d09a74',
+        name: 'Llama2',
       },
       null: { icon: <GPTIcon size={size * 0.7} />, bg: 'grey', name: 'N/A' },
       default: { icon: <GPTIcon size={size * 0.7} />, bg: 'grey', name: 'UNKNOWN' },

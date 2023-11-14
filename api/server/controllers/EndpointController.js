@@ -11,6 +11,7 @@ const {
   bingAI,
   chatGPTBrowser,
   anthropic,
+  databricks,
 } = require('../services/EndpointService').config;
 
 let i = 0;
@@ -53,7 +54,7 @@ async function endpointController(req, res) {
       : false;
 
   res.send(
-    JSON.stringify({ azureOpenAI, openAI, google, bingAI, chatGPTBrowser, gptPlugins, anthropic }),
+    JSON.stringify({ azureOpenAI, openAI, google, bingAI, chatGPTBrowser, gptPlugins, anthropic, databricks }),
   );
 }
 

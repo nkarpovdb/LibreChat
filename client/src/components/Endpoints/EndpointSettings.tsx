@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { OpenAISettings, BingAISettings, AnthropicSettings } from './Settings';
+import { OpenAISettings, BingAISettings, AnthropicSettings, DatabricksSettings } from './Settings';
 import { GoogleSettings, PluginsSettings } from './Settings/MultiView';
 import type { TSettingsProps, TModelSelectProps, TBaseSettingsProps, TModels } from '~/common';
 import { cn } from '~/utils';
@@ -10,6 +10,7 @@ const optionComponents: { [key: string]: React.FC<TModelSelectProps> } = {
   azureOpenAI: OpenAISettings,
   bingAI: BingAISettings,
   anthropic: AnthropicSettings,
+  databricks: DatabricksSettings,
 };
 
 const multiViewComponents: { [key: string]: React.FC<TBaseSettingsProps & TModels> } = {

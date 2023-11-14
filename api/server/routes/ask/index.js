@@ -6,6 +6,7 @@ const bingAI = require('./bingAI');
 const gptPlugins = require('./gptPlugins');
 const askChatGPTBrowser = require('./askChatGPTBrowser');
 const anthropic = require('./anthropic');
+const databricks = require('./databricks');
 const {
   uaParser,
   checkBan,
@@ -40,5 +41,6 @@ router.use('/bingAI', bingAI);
 router.use('/chatGPTBrowser', askChatGPTBrowser);
 router.use('/gptPlugins', gptPlugins);
 router.use('/anthropic', anthropic);
+router.use('/databricks', databricks);
 
 module.exports = router;

@@ -7,6 +7,7 @@ import {
   BingAIMinimalIcon,
   PaLMinimalIcon,
   AnthropicMinimalIcon,
+  DatabricksMinimalIcon,
 } from '~/components/svg';
 import { cn } from '~/utils';
 import { IconProps } from '~/common';
@@ -29,6 +30,7 @@ const MinimalIcon: React.FC<IconProps> = (props) => {
     bingAI: { icon: <BingAIMinimalIcon />, name: 'BingAI' },
     chatGPTBrowser: { icon: <ChatGPTMinimalIcon />, name: 'ChatGPT' },
     default: { icon: <OpenAIMinimalIcon />, name: 'UNKNOWN' },
+    databricks: { icon: <DatabricksMinimalIcon />, name: 'Databricks'}
   };
 
   const { icon, name } = endpointIcons[endpoint] ?? endpointIcons.default;

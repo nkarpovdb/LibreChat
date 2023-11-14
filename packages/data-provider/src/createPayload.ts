@@ -15,6 +15,7 @@ export default function createPayload(submission: TSubmission) {
     chatGPTBrowser: '/api/ask/chatGPTBrowser',
     gptPlugins: '/api/ask/gptPlugins',
     anthropic: '/api/ask/anthropic',
+    databricks: '/api/ask/databricks',
   };
 
   let server = endpointUrlMap[endpoint];

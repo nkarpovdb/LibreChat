@@ -48,6 +48,7 @@ export const alternateName = {
   gptPlugins: 'Plugins',
   google: 'PaLM',
   anthropic: 'Anthropic',
+  databricks: 'Databricks',
 };
 
 export const removeFocusOutlines =

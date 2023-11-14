@@ -8,6 +8,7 @@ const EModelEndpoint = {
   google: 'google',
   gptPlugins: 'gptPlugins',
   anthropic: 'anthropic',
+  databricks: 'databricks',
 };
 
 const eModelEndpointSchema = z.nativeEnum(EModelEndpoint);
@@ -263,6 +264,8 @@ const gptPluginsSchema = tConversationSchema
     },
   }));
 
+const databricksSchema = anthropicSchema;
+
 const endpointSchemas = {
   openAI: openAISchema,
   azureOpenAI: openAISchema,
@@ -271,6 +274,7 @@ const endpointSchemas = {
   anthropic: anthropicSchema,
   chatGPTBrowser: chatGPTBrowserSchema,
   gptPlugins: gptPluginsSchema,
+  databricks: databricksSchema,
 };
 
 function getFirstDefinedValue(possibleValues) {
@@ -317,6 +321,10 @@ const getResponseSender = (endpointOption) => {
 
   if (endpoint === 'google') {
     return modelLabel ?? 'PaLM2';
+  }
+
+  if (endpoint === 'databricks') {
+    return modelLabel ?? 'DBXENDPOINTDEBUG';
   }
 
   return '';

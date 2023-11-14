@@ -14,9 +14,10 @@ async function modelController(req, res) {
   const bingAI = ['BingAI', 'Sydney'];
   const chatGPTBrowser = getChatGPTBrowserModels();
   const anthropic = getAnthropicModels();
+  const databricks = ['databricks-llama-2-70b-chat'];
 
   res.send(
-    JSON.stringify({ azureOpenAI, openAI, google, bingAI, chatGPTBrowser, gptPlugins, anthropic }),
+    JSON.stringify({ azureOpenAI, openAI, google, bingAI, chatGPTBrowser, gptPlugins, anthropic, databricks }),
   );
 }
 

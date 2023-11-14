@@ -17,6 +17,7 @@ const getAvailableEndpoints = (filter: Record<string, boolean>) => {
     'bingAI',
     'google',
     'anthropic',
+    'databricks',
   ];
   return endpoints.filter((endpoint) => filter[endpoint]);
 };

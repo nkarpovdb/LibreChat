@@ -8,6 +8,7 @@ export enum EModelEndpoint {
   google = 'google',
   gptPlugins = 'gptPlugins',
   anthropic = 'anthropic',
+  databricks = 'databricks',
 }
 
 export const eModelEndpointSchema = z.nativeEnum(EModelEndpoint);
@@ -339,11 +340,25 @@ export const gptPluginsSchema = tConversationSchema
     },
   }));
 
+export const databricksSchema = tConversationSchema
+  .pick({
+    model: true,
+  })
+  .transform((obj) => ({
+    ...obj,
+    model: obj.model ?? 'databricks-llama-2-70b-chat',
+  }))
+  .catch(() => ({
+    model: 'databricks-llama-2-70b-chat',
+  }));
+  ;
+
 type EndpointSchema =
   | typeof openAISchema
   | typeof googleSchema
   | typeof bingAISchema
   | typeof anthropicSchema
+  | typeof databricksSchema
   | typeof chatGPTBrowserSchema
   | typeof gptPluginsSchema;
 
@@ -353,6 +368,7 @@ const endpointSchemas: Record<EModelEndpoint, EndpointSchema> = {
   google: googleSchema,
   bingAI: bingAISchema,
   anthropic: anthropicSchema,
+  databricks: databricksSchema,
   chatGPTBrowser: chatGPTBrowserSchema,
   gptPlugins: gptPluginsSchema,
 };
@@ -426,6 +442,10 @@ export const getResponseSender = (endpointOption: TEndpointOption): string => {
 
   if (endpoint === 'google') {
     return modelLabel ?? 'PaLM2';
+  }
+
+  if (endpoint === 'databricks') {
+    return modelLabel ?? 'Llama2-70b-chat'
   }
 
   return '';

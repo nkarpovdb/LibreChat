@@ -13,6 +13,7 @@ const defaultEndpoints = [
   'gptPlugins',
   'google',
   'anthropic',
+  'databricks',
 ];
 
 const getEndpointFromSetup = (convoSetup: TConvoSetup, endpointsConfig: TEndpointsConfig) => {

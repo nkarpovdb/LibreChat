@@ -9,6 +9,7 @@ const defaultConfig: TEndpointsConfig = {
   gptPlugins: null,
   google: null,
   anthropic: null,
+  databricks: null,
 };
 
 const endpointsConfig = atom<TEndpointsConfig>({
@@ -48,6 +49,7 @@ const availableEndpoints = selector({
       'bingAI',
       'google',
       'anthropic',
+      'databricks',
     ];
     const f = get(endpointsFilter);
     return endpoints.filter((endpoint) => f[endpoint]);

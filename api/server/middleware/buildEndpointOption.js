@@ -1,6 +1,7 @@
 const openAI = require('../routes/endpoints/openAI');
 const gptPlugins = require('../routes/endpoints/gptPlugins');
 const anthropic = require('../routes/endpoints/anthropic');
+const databricks = require('../routes/endpoints/databricks');
 const { parseConvo } = require('../routes/endpoints/schemas');
 
 const buildFunction = {
@@ -8,6 +9,7 @@ const buildFunction = {
   azureOpenAI: openAI.buildOptions,
   gptPlugins: gptPlugins.buildOptions,
   anthropic: anthropic.buildOptions,
+  databricks: databricks.buildOptions,
 };
 
 function buildEndpointOption(req, res, next) {
