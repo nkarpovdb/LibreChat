@@ -1,9 +1,12 @@
 // const { Agent, ProxyAgent } = require('undici');
 const BaseClient = require('./BaseClient');
 const { encoding_for_model: encodingForModel, get_encoding: getEncoding } = require('tiktoken');
+const axios = require('axios');
+const { Readable } = require('stream');
 
-const HUMAN_PROMPT = '\n\nHuman:';
-const AI_PROMPT = '\n\nAssistant:';
+
+const HUMAN_PROMPT = 'user';
+const AI_PROMPT = 'assistant';
 
 const tokenizersCache = {};
 
@@ -11,7 +14,7 @@ class DatabricksClient extends BaseClient {
   constructor(apiKey, options = {}, cacheOptions = {}) {
     super(apiKey, options, cacheOptions);
     this.apiKey = apiKey || process.env.ANTHROPIC_API_KEY;
-    this.sender = 'Databricks';
+    this.sender = 'assistant';
     this.userLabel = HUMAN_PROMPT;
     this.assistantLabel = AI_PROMPT;
     this.setOptions(options);
@@ -52,8 +55,7 @@ class DatabricksClient extends BaseClient {
 
     if (this.maxPromptTokens + this.maxResponseTokens > this.maxContextTokens) {
       throw new Error(
-        `maxPromptTokens + maxOutputTokens (${this.maxPromptTokens} + ${this.maxResponseTokens} = ${
-          this.maxPromptTokens + this.maxResponseTokens
+        `maxPromptTokens + maxOutputTokens (${this.maxPromptTokens} + ${this.maxResponseTokens} = ${this.maxPromptTokens + this.maxResponseTokens
         }) must be less than or equal to maxContextTokens (${this.maxContextTokens})`,
       );
     }
@@ -225,6 +227,9 @@ class DatabricksClient extends BaseClient {
       this.maxResponseTokens,
     );
 
+    // hijack all the above and just return the context as the prompt for our case... TODO: clean this up
+    prompt = context
+
     return { prompt, context };
   }
 
@@ -233,14 +238,38 @@ class DatabricksClient extends BaseClient {
   }
 
   async sendCompletion(payload, { onProgress, abortController }) {
-    console.log('Payload type:', typeof payload);
-    let text = "";
-    for (let i = 0; i < 30; i++) {
-      text += "hi! ";
-      onProgress("hi! ");
-      await new Promise(resolve => setTimeout(resolve, 30));
+    const formatForFoundationModel = payload.map((message) => ({
+      role: message.author,
+      content: message.content[0]
+    }));
+
+    const request = {
+      messages: formatForFoundationModel, // your conversation messages
+      max_tokens: 100,
+      stream: true,
+    };
+
+    let text = ""
+
+    let url = "https://e2-dogfood-lha.staging.cloud.databricks.com/serving-endpoints/databricks-llama-2-70b-chat/invocations"
+    let headers = { 'Authorization': `Bearer ${this.apiKey}` }
+
+    const response = await axios.post(url, request, {
+      headers: headers,
+      responseType: 'stream'
+    });
+
+    for await (const chunk of response.data) {
+      // chunk is gross
+      let jsonString = chunk.toString().slice(6).replace("\n", "")
+      let json = JSON.parse(jsonString);
+      let delta = json.choices[0].delta.content
+      text += delta
+      onProgress(delta)
+      if (json.choices[0].finish_reason != null) break;
     }
-    return text.trim();
+
+    return text.trim()
   }
 
   getSaveOptions() {
